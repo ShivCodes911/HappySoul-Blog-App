@@ -1,105 +1,121 @@
 import { Link } from 'react-router-dom';
+import { Heart, Bookmark, ArrowUpRight } from 'lucide-react';
 
 function formatDate(dateStr) {
   if (!dateStr) return '';
   return new Date(dateStr).toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric',
-  });
+  }).toUpperCase();
 }
 
-function truncate(str, n = 130) {
+function truncate(str, n = 140) {
   if (!str) return '';
   return str.length > n ? str.slice(0, n) + '…' : str;
 }
 
-export default function PostCard({ post, onLike, onBookmark, isLiked, isBookmarked }) {
+function calculateReadingTime(content) {
+  if (!content) return '1 MIN READ';
+  const words = content.trim().split(/\s+/).length;
+  const minutes = Math.max(1, Math.ceil(words / 200));
+  return `${minutes} MIN READ`;
+}
+
+export default function PostCard({ post, onLike, onBookmark, isLiked, isBookmarked, featured = false }) {
   const authorName = post?.author?.name || 'Anonymous';
-  const authorInitial = authorName[0].toUpperCase();
-  // coverImage and profileImage are stored as { url, public_id } objects on the backend
+  const authorInitial = authorName[0]?.toUpperCase() || 'U';
   const coverUrl = post?.coverImage?.url || post?.coverImage;
   const authorAvatarUrl = post?.author?.profileImage?.url || post?.author?.profileImage;
 
   return (
-    <article style={cardStyles.card} className="animate-fadeInUp">
-      {/* Cover image */}
+    <article
+      style={{
+        ...vc.card,
+        ...(featured ? vc.featuredCard : {}),
+      }}
+      className="card"
+    >
+      {/* Cover Image Frame */}
       {coverUrl && (
-        <Link to={`/posts/${post._id}`} style={cardStyles.imageLink}>
+        <Link to={`/posts/${post._id}`} style={vc.imageLink}>
           <img
             src={coverUrl}
             alt={post.title}
-            style={cardStyles.image}
+            style={vc.image}
             loading="lazy"
           />
         </Link>
       )}
 
-      <div style={cardStyles.body}>
-        {/* Status badge */}
-        <div style={cardStyles.meta}>
-          {!post?.isPublished && (
-            <span className="badge badge-red">Draft</span>
+      <div style={vc.body}>
+        {/* Overline Rubric */}
+        <div style={vc.rubricRow}>
+          <span className="type-overline" style={{ color: 'var(--clr-secondary)' }}>STORY</span>
+          <span style={vc.dot}>/</span>
+          <span style={vc.readingTime}>{calculateReadingTime(post?.content)}</span>
+          {!post?.published && (
+            <span className="status-chip warning" style={{ marginLeft: 'auto', padding: '2px 6px', fontSize: '9px' }}>DRAFT</span>
           )}
-          <span style={cardStyles.date}>{formatDate(post?.createdAt)}</span>
         </div>
 
-        {/* Title */}
-        <Link to={`/posts/${post._id}`} style={cardStyles.titleLink}>
-          <h2 style={cardStyles.title}>{post?.title}</h2>
+        {/* Archivo Black Headline */}
+        <Link to={`/posts/${post._id}`} style={vc.titleLink}>
+          <h3 style={vc.title}>{post?.title}</h3>
         </Link>
 
         {/* Excerpt */}
-        <p style={cardStyles.excerpt}>{truncate(post?.content)}</p>
+        <p style={vc.excerpt}>{truncate(post?.content)}</p>
 
-        {/* Author + Actions */}
-        <div style={cardStyles.footer}>
-          <div style={cardStyles.author}>
+        {/* Editorial Byline & Action Footer */}
+        <div style={vc.footer}>
+          <div style={vc.author}>
             {authorAvatarUrl ? (
               <img
                 src={authorAvatarUrl}
                 alt={authorName}
                 className="avatar"
-                style={{ width: 32, height: 32 }}
+                style={{ width: 28, height: 28 }}
               />
             ) : (
-              <div style={cardStyles.authorPlaceholder}>{authorInitial}</div>
+              <div style={vc.authorPlaceholder}>{authorInitial}</div>
             )}
-            <span style={cardStyles.authorName}>{authorName}</span>
+            <div style={vc.authorMeta}>
+              <span style={vc.authorName}>{authorName}</span>
+              <span style={vc.date}>{formatDate(post?.createdAt)}</span>
+            </div>
           </div>
 
-          <div style={cardStyles.actions}>
-            {/* Like */}
-            <button
-              style={{
-                ...cardStyles.actionBtn,
-                ...(isLiked ? cardStyles.actionBtnActive : {}),
-              }}
-              onClick={onLike}
-              id={`like-post-${post._id}`}
-              title="Like"
-            >
-              {isLiked ? '❤️' : '🤍'} {post?.likeCount ?? 0}
-            </button>
+          <div style={vc.actions}>
+            {onLike && (
+              <button
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onLike(); }}
+                style={{
+                  ...vc.iconBtn,
+                  ...(isLiked ? vc.likedBtn : {}),
+                }}
+                title={isLiked ? 'Unlike' : 'Like'}
+                aria-label="Like post"
+              >
+                <Heart size={14} fill={isLiked ? '#EF4444' : 'none'} />
+                <span style={vc.count}>{post?.likeCount ?? 0}</span>
+              </button>
+            )}
 
-            {/* Bookmark */}
-            <button
-              style={{
-                ...cardStyles.actionBtn,
-                ...(isBookmarked ? cardStyles.bookmarkActive : {}),
-              }}
-              onClick={onBookmark}
-              id={`bookmark-post-${post._id}`}
-              title="Bookmark"
-            >
-              {isBookmarked ? '🔖' : '📌'}
-            </button>
+            {onBookmark && (
+              <button
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onBookmark(); }}
+                style={{
+                  ...vc.iconBtn,
+                  ...(isBookmarked ? vc.bookmarkedBtn : {}),
+                }}
+                title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
+                aria-label="Bookmark post"
+              >
+                <Bookmark size={14} fill={isBookmarked ? 'var(--clr-border-strong)' : 'none'} />
+              </button>
+            )}
 
-            {/* Read more */}
-            <Link
-              to={`/posts/${post._id}`}
-              style={cardStyles.readMore}
-              id={`read-post-${post._id}`}
-            >
-              Read →
+            <Link to={`/posts/${post._id}`} style={vc.readBtn} title="Read article">
+              <ArrowUpRight size={14} />
             </Link>
           </div>
         </div>
@@ -108,122 +124,150 @@ export default function PostCard({ post, onLike, onBookmark, isLiked, isBookmark
   );
 }
 
-const cardStyles = {
+const vc = {
   card: {
-    background: 'rgba(255,255,255,0.03)',
-    border: '1px solid var(--clr-border)',
-    borderRadius: 'var(--radius-xl)',
-    overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
-    transition: 'border-color 0.25s, transform 0.25s, box-shadow 0.25s',
-    cursor: 'default',
+    height: '100%',
+    padding: 0,
+    backgroundColor: 'var(--clr-bg)',
+    border: '2px solid var(--clr-border-medium)',
+    transition: 'border-color 0.15s ease',
   },
-  imageLink: { display: 'block', overflow: 'hidden' },
+  featuredCard: {
+    borderTop: '4px solid var(--clr-secondary)',
+  },
+  imageLink: {
+    display: 'block',
+    borderBottom: '2px solid var(--clr-border-strong)',
+    overflow: 'hidden',
+    maxHeight: 220,
+  },
   image: {
     width: '100%',
-    height: 200,
+    height: 220,
     objectFit: 'cover',
-    transition: 'transform 0.4s ease',
   },
   body: {
-    padding: '20px',
+    padding: 24,
     display: 'flex',
     flexDirection: 'column',
-    gap: 10,
     flex: 1,
   },
-  meta: {
+  rubricRow: {
     display: 'flex',
     alignItems: 'center',
     gap: 8,
+    marginBottom: 12,
   },
-  date: {
-    fontSize: '0.75rem',
+  dot: {
+    color: 'var(--clr-border-medium)',
+    fontSize: '11px',
+  },
+  readingTime: {
+    fontFamily: 'var(--font-mono)',
+    fontSize: '11px',
     color: 'var(--clr-text-3)',
-  },
-  titleLink: { textDecoration: 'none' },
-  title: {
-    fontFamily: 'var(--font-serif)',
-    fontSize: '1.15rem',
     fontWeight: 700,
+  },
+  titleLink: {
+    textDecoration: 'none',
+  },
+  title: {
+    fontFamily: 'var(--font-display)',
+    fontSize: '1.25rem',
+    lineHeight: 1.25,
+    letterSpacing: '-0.015em',
     color: 'var(--clr-text-1)',
-    lineHeight: 1.4,
-    transition: 'color 0.2s',
+    marginBottom: 12,
+    transition: 'color 0.15s ease',
   },
   excerpt: {
+    fontFamily: 'var(--font-sans)',
     fontSize: '0.875rem',
-    color: 'var(--clr-text-2)',
     lineHeight: 1.65,
-    flex: 1,
+    color: 'var(--clr-text-2)',
+    marginBottom: 20,
   },
   footer: {
+    marginTop: 'auto',
+    paddingTop: 16,
+    borderTop: '1px solid var(--clr-border-subtle)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 8,
-    gap: 8,
-    flexWrap: 'wrap',
+    gap: 12,
   },
   author: {
     display: 'flex',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
   },
   authorPlaceholder: {
-    width: 32,
-    height: 32,
-    borderRadius: '50%',
-    background: 'linear-gradient(135deg, var(--clr-primary), var(--clr-accent))',
+    width: 28,
+    height: 28,
+    borderRadius: '9999px',
+    backgroundColor: 'var(--clr-border-strong)',
+    color: 'var(--clr-bg)',
+    fontFamily: 'var(--font-display)',
+    fontSize: '11px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontWeight: 700,
-    fontSize: '0.8rem',
-    color: '#fff',
-    flexShrink: 0,
+  },
+  authorMeta: {
+    display: 'flex',
+    flexDirection: 'column',
   },
   authorName: {
-    fontSize: '0.8rem',
-    fontWeight: 500,
-    color: 'var(--clr-text-2)',
+    fontFamily: 'var(--font-sans)',
+    fontSize: '12px',
+    fontWeight: 700,
+    color: 'var(--clr-text-1)',
+    letterSpacing: '0.02em',
+  },
+  date: {
+    fontFamily: 'var(--font-mono)',
+    fontSize: '10px',
+    color: 'var(--clr-text-3)',
+    letterSpacing: '0.02em',
   },
   actions: {
     display: 'flex',
     alignItems: 'center',
     gap: 6,
   },
-  actionBtn: {
-    background: 'var(--clr-surface-2)',
-    border: '1px solid var(--clr-border)',
-    borderRadius: 'var(--radius-full)',
-    padding: '4px 10px',
-    fontSize: '0.8rem',
-    color: 'var(--clr-text-2)',
-    cursor: 'pointer',
+  iconBtn: {
+    background: 'none',
+    border: '2px solid var(--clr-border-medium)',
+    padding: '4px 8px',
     display: 'flex',
     alignItems: 'center',
     gap: 4,
-    transition: 'all 0.2s',
+    color: 'var(--clr-text-2)',
+    cursor: 'pointer',
+    transition: 'all 0.15s ease',
   },
-  actionBtnActive: {
-    borderColor: 'rgba(239,68,68,0.4)',
-    background: 'rgba(239,68,68,0.1)',
-    color: 'var(--clr-danger)',
+  count: {
+    fontFamily: 'var(--font-mono)',
+    fontSize: '11px',
+    fontWeight: 700,
   },
-  bookmarkActive: {
-    borderColor: 'rgba(124,58,237,0.4)',
-    background: 'rgba(124,58,237,0.1)',
+  likedBtn: {
+    borderColor: 'var(--clr-secondary)',
+    color: 'var(--clr-secondary)',
   },
-  readMore: {
-    fontSize: '0.8rem',
-    fontWeight: 600,
-    color: 'var(--clr-primary-light)',
-    textDecoration: 'none',
-    padding: '4px 10px',
-    borderRadius: 'var(--radius-full)',
-    border: '1px solid rgba(124,58,237,0.3)',
-    background: 'rgba(124,58,237,0.08)',
-    transition: 'all 0.2s',
+  bookmarkedBtn: {
+    borderColor: 'var(--clr-border-strong)',
+    color: 'var(--clr-border-strong)',
+  },
+  readBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 6,
+    border: '2px solid var(--clr-border-strong)',
+    color: 'var(--clr-text-1)',
+    transition: 'all 0.15s ease',
   },
 };

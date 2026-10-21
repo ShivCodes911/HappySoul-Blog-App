@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { forgetPasswordApi } from '../api/auth';
 
 export default function ForgotPasswordPage() {
@@ -16,7 +17,7 @@ export default function ForgotPasswordPage() {
       await forgetPasswordApi({ email });
       setSent(true);
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong');
+      setError(err.response?.data?.message || 'Failed to dispatch recovery code');
     } finally {
       setLoading(false);
     }
@@ -24,56 +25,106 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="auth-container">
-      <div className="glass-card auth-card animate-scaleIn">
-        <div className="auth-logo">
-          <div className="auth-logo-icon">🔑</div>
-          <span className="auth-logo-text">InkFlow</span>
+      <div className="auth-card">
+        <div style={vAuth.rubric}>
+          <span className="type-overline">INKFLOW</span>
+          <span style={vAuth.rubricSlash}>/</span>
+          <span style={vAuth.edition}>PASSWORD RECOVERY</span>
         </div>
-        <h1 className="auth-title">Forgot password?</h1>
-        <p className="auth-subtitle">
-          Enter your email and we&apos;ll send you a reset link
-        </p>
 
         {sent ? (
-          <div style={{ textAlign: 'center', padding: '20px 0' }}>
-            <div style={{ fontSize: '3rem', marginBottom: 16 }}>📧</div>
-            <p className="success-msg">
-              Reset link sent! Check your inbox and follow the instructions.
+          <div>
+            <h1 className="auth-title">CODE DISPATCHED</h1>
+            <p className="auth-subtitle" style={{ marginBottom: 20 }}>
+              A 6-digit recovery code has been sent to <strong>{email}</strong>.
             </p>
-            <Link to="/login" className="btn btn-ghost" style={{ marginTop: 20, width: '100%', justifyContent: 'center' }}>
-              ← Back to login
-            </Link>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <Link
+                to={`/reset-password?email=${encodeURIComponent(email)}`}
+                className="btn btn-primary btn-lg"
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                <span>ENTER OTP & RESET PASSWORD</span>
+                <ArrowRight size={15} />
+              </Link>
+
+              <Link
+                to="/login"
+                className="btn btn-ghost"
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
+                <ArrowLeft size={14} />
+                <span>RETURN TO LOG IN</span>
+              </Link>
+            </div>
           </div>
         ) : (
-          <form className="auth-form" onSubmit={handleSubmit}>
-            {error && <p className="error-msg">{error}</p>}
-            <div className="form-group">
-              <label className="form-label" htmlFor="forgot-email">Email address</label>
-              <input
-                id="forgot-email"
-                type="email"
-                className="form-input"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              style={{ width: '100%', justifyContent: 'center' }}
-              disabled={loading}
-              id="forgot-submit-btn"
-            >
-              {loading ? 'Sending…' : 'Send Reset Link'}
-            </button>
-            <Link to="/login" className="btn btn-ghost" style={{ width: '100%', justifyContent: 'center' }}>
-              ← Back to login
-            </Link>
-          </form>
+          <>
+            <h1 className="auth-title">FORGOT PASSWORD</h1>
+            <p className="auth-subtitle">
+              Enter your email address to receive a 6-digit password reset verification code.
+            </p>
+
+            <form onSubmit={handleSubmit}>
+              {error && <div className="form-helper error" style={{ marginBottom: 16 }}>{error}</div>}
+
+              <div className="form-group">
+                <label className="form-label" htmlFor="forgot-email">ACCOUNT EMAIL</label>
+                <input
+                  id="forgot-email"
+                  type="email"
+                  className="form-input"
+                  placeholder="YOU@EXAMPLE.COM"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="btn btn-primary btn-lg"
+                style={{ width: '100%', marginTop: 8 }}
+                disabled={loading}
+                id="forgot-submit-btn"
+              >
+                <span>{loading ? 'SENDING CODE…' : 'SEND RESET CODE'}</span>
+                <ArrowRight size={15} />
+              </button>
+
+              <Link
+                to="/login"
+                className="btn btn-ghost"
+                style={{ width: '100%', marginTop: 12, justifyContent: 'center' }}
+              >
+                <ArrowLeft size={14} />
+                <span>RETURN TO LOG IN</span>
+              </Link>
+            </form>
+          </>
         )}
       </div>
     </div>
   );
 }
+
+const vAuth = {
+  rubric: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
+  },
+  rubricSlash: {
+    color: 'var(--clr-border-medium)',
+    fontWeight: 700,
+  },
+  edition: {
+    fontFamily: 'var(--font-mono)',
+    fontSize: '11px',
+    color: 'var(--clr-text-3)',
+    fontWeight: 700,
+  },
+};
