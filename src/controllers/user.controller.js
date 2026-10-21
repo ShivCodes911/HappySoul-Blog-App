@@ -20,76 +20,84 @@ import likeModel from "../models/like.model.js";
 
 
 
-export async function signup(req,res){
-   try {
-     const validationResult=await signupPostRequestBodySchema.safeParseAsync(req.body);
+export async function signup(req, res) {
+  try {
+    const validationResult = await signupPostRequestBodySchema.safeParseAsync(req.body);
 
-    if(!validationResult.success){
-        return res.status(411).json({
-            status:"failed",
-            error: validationResult.error.message
-        });
-     }
+    if (!validationResult.success) {
+      return res.status(400).json({
+        status: "failed",
+        error: validationResult.error.message,
+      });
+    }
 
-     const {name,email,password} =  validationResult.data;
+    const { name, email, password } = validationResult.data;
 
-     const existingUser=await userModel.findOne({
-        email
-     });
+    const existingUser = await userModel.findOne({ email });
 
+    // If already registered and verified, prompt them to log in
+    if (existingUser && existingUser.isVerified) {
+      return res.status(400).json({
+        status: "failed",
+        message: `An account with email ${email} already exists. Please log in instead.`,
+      });
+    }
 
-     if(existingUser){
-        return res.status(400).json({
-            status:"failed",
-            message:`user with this email ${email} already exists `
-        })
-     }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    let user;
 
-     const hashedPassword = await bcrypt.hash(password,10);
-
-
-     const user =await userModel.create({
+    if (existingUser && !existingUser.isVerified) {
+      // Allow re-registering/updating credentials for unverified accounts
+      existingUser.name = name;
+      existingUser.password = hashedPassword;
+      user = await existingUser.save();
+      // Remove any previously issued, unverified OTPs
+      await otpModel.deleteMany({ email, purpose: "email-verification" });
+    } else {
+      user = await userModel.create({
         name,
         email,
-        password:hashedPassword
-     });
+        password: hashedPassword,
+      });
+    }
 
-     const otp= generateOtp();
+    const otp = generateOtp();
+    const html = getOtpHtml(otp);
+    const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
 
-     const html =getOtpHtml(otp);
+    await otpModel.create({
+      email,
+      hashedOtp,
+      user: user._id,
+      purpose: "email-verification",
+    });
 
+    try {
+      await sendEmail(email, "OTP verification", `Your Otp code is ${otp} for 10 min`, html);
+    } catch (emailError) {
+      console.error("[Signup] Failed to send verification email:", emailError);
+      return res.status(500).json({
+        status: "failed",
+        message: `Account created, but failed to send verification email: ${emailError.message || "Email error"}. Please check your email configuration on Render.`,
+      });
+    }
 
-     const hashedOtp=crypto.createHash("sha256").update(otp).digest("hex");
-
-     await otpModel.create({
-        email,
-        hashedOtp,
-        user:user._id,
-        purpose:"email-verification"
-     })
-
-     await sendEmail(email,"OTP verification",`Your Otp code is ${otp} for 10 min`,html);
-
-     return res.status(200).json({
-        status:"success",
-        msg:"User created Successfully",
-        user:{
-            name:user.name,
-            email:user.email,
-            Verified:user.isVerified,
-        },
-
-        
-     })
-
-} catch (error) {
-   console.error(error);
-   return res.status(500).json({
-      status:"failed",
-      message:"Internal Server Error"
-   })
-    
-   }
+    return res.status(200).json({
+      status: "success",
+      msg: "User created Successfully. Verification code sent to your email.",
+      user: {
+        name: user.name,
+        email: user.email,
+        Verified: user.isVerified,
+      },
+    });
+  } catch (error) {
+    console.error("[Signup Error]", error);
+    return res.status(500).json({
+      status: "failed",
+      message: error.message || "Internal Server Error",
+    });
+  }
 };
 
 
@@ -881,5 +889,50 @@ export const deleteUser=async(req,res)=>{
       status:false,
       message:"Internal Server Error"
     })
+  }
+};
+
+export async function resendVerificationOtp(req, res) {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ status: false, message: "Email is required" });
+    }
+
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found with this email" });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ status: false, message: "Account is already verified. Please log in." });
+    }
+
+    // Invalidate old unverified OTPs
+    await otpModel.deleteMany({ email, purpose: "email-verification" });
+
+    const otp = generateOtp();
+    const html = getOtpHtml(otp);
+    const hashedOtp = crypto.createHash("sha256").update(otp).digest("hex");
+
+    await otpModel.create({
+      email,
+      hashedOtp,
+      user: user._id,
+      purpose: "email-verification",
+    });
+
+    await sendEmail(email, "OTP verification", `Your Otp code is ${otp} for 10 min`, html);
+
+    return res.status(200).json({
+      status: true,
+      message: "New verification code sent to your email.",
+    });
+  } catch (error) {
+    console.error("[Resend OTP] Error:", error);
+    return res.status(500).json({
+      status: false,
+      message: error.message || "Failed to resend verification code",
+    });
   }
 }

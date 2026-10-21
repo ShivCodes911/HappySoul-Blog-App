@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Eye, EyeOff, ArrowRight, ArrowLeft } from 'lucide-react';
-import { signupApi, verifyEmailApi } from '../api/auth';
+import { Eye, EyeOff, ArrowRight, ArrowLeft, RefreshCw } from 'lucide-react';
+import { signupApi, verifyEmailApi, resendOtpApi } from '../api/auth';
 import { useToast } from '../components/Toast';
 
 const STEPS = { REGISTER: 'register', OTP: 'otp' };
@@ -14,10 +14,24 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
   const handleChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+
+  const handleResend = async () => {
+    setError('');
+    setResending(true);
+    try {
+      await resendOtpApi({ email: form.email });
+      setSuccess('A fresh verification code has been dispatched to your email.');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to resend code');
+    } finally {
+      setResending(false);
+    }
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -181,7 +195,19 @@ export default function RegisterPage() {
               <button
                 type="button"
                 className="btn btn-ghost"
-                style={{ width: '100%', marginTop: 10, justifyContent: 'center' }}
+                style={{ width: '100%', marginTop: 8, justifyContent: 'center' }}
+                disabled={resending || loading}
+                onClick={handleResend}
+                id="otp-resend-btn"
+              >
+                <RefreshCw size={13} style={resending ? { animation: 'spin 1s linear infinite' } : {}} />
+                <span>{resending ? 'RESENDING CODE…' : 'RESEND CODE'}</span>
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-ghost"
+                style={{ width: '100%', marginTop: 6, justifyContent: 'center' }}
                 onClick={() => { setStep(STEPS.REGISTER); setError(''); setSuccess(''); }}
               >
                 <ArrowLeft size={14} />
