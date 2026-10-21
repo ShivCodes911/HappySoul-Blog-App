@@ -10,8 +10,15 @@ import bookmarkRouter from "./routes/bookmark.routes.js";
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:5173', 'http://localhost:5174', 'http://localhost:3003', 'http://localhost:3004', 'http://localhost:3005', 'http://localhost:3006'],
+    origin: [
+      'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 
+      'http://localhost:5173', 'http://localhost:5174', 'http://localhost:3003', 
+      'http://localhost:3004', 'http://localhost:3005', 'http://localhost:3006',
+      ...(process.env.CLIENT_URL ? process.env.CLIENT_URL.split(',').map(s => s.trim().replace(/\/+$/, '')) : [])
+    ],
     credentials: true,
     methods: ['GET','POST','DELETE','PUT','PATCH','OPTIONS'],
     allowedHeaders: ['Authorization','Content-Type']
