@@ -25,6 +25,8 @@ services:
         sync: false
       - key: GOOGLE_USER_ID
         sync: false
+      - key: RESEND_API_KEY
+        sync: false
       - key: CLOUDINARY_CLOUD_NAME
         sync: false
       - key: CLOUDINARY_API_KEY
