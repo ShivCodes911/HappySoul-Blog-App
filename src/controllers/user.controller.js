@@ -1,3 +1,4 @@
+
 import userModel from "../models/user.model.js";
 import sessionModel from "../models/session.model.js";
 import bcrypt from "bcrypt";
@@ -171,7 +172,7 @@ export const verifyEmail = async (req, res) => {
         isVerified: true,
       },
       {
-        new: true,
+        returnDocument: "after",
       }
     );
 

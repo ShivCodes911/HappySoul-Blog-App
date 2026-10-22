@@ -238,7 +238,7 @@ export const updatePost=async(req,res)=>{
         title,
         content
     },{
-        new:true  // return the updated document instead of old one 
+        returnDocument: "after"  // return the updated document instead of old one 
     });
 
 
