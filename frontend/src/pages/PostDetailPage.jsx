@@ -233,7 +233,7 @@ export default function PostDetailPage() {
         </h1>
 
         {/* Byline Bar & Reader Controls */}
-        <div style={vp.bylineBar}>
+        <div style={vp.bylineBar} className="post-byline-bar">
           <div style={vp.authorCluster}>
             {authorAvatarUrl ? (
               <img
@@ -252,7 +252,7 @@ export default function PostDetailPage() {
           </div>
 
           {/* Action Suite & Reader Controls */}
-          <div style={vp.actionsCluster}>
+          <div style={vp.actionsCluster} className="post-actions-cluster">
             {/* Font Size Adjuster */}
             <div style={vp.fontSizeControls} title="Adjust text size">
               <Type size={12} style={{ color: 'var(--clr-text-3)', marginRight: 2 }} />

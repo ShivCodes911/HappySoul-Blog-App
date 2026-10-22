@@ -616,14 +616,387 @@ textarea.form-input {
 }
 
 /* =====================================================================
-   RESPONSIVE BREAKPOINTS
+   ADDITIONAL EDITORIAL & LAYOUT UTILITIES
    ===================================================================== */
 
-@media (max-width: 768px) {
-  .page {
-    padding-top: 96px;
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  letter-spacing: -0.02em;
+  color: var(--clr-text-1);
+  margin-top: 4px;
+}
+
+.empty-state {
+  border: 2px solid var(--clr-border-strong);
+  padding: 56px 24px;
+  text-align: center;
+  margin-top: 24px;
+  background-color: var(--clr-surface);
+}
+
+.empty-state-title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  letter-spacing: -0.01em;
+  margin-bottom: 10px;
+  color: var(--clr-text-1);
+}
+
+.empty-state-desc {
+  color: var(--clr-text-2);
+  max-width: 480px;
+  margin: 0 auto 24px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+/* =====================================================================
+   NAVBAR RESPONSIVE UTILITIES
+   ===================================================================== */
+
+.nav-desktop {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: 2px solid var(--clr-border-strong);
+  padding: 6px;
+  color: var(--clr-text-1);
+  cursor: pointer;
+}
+
+.nav-ticker-text {
+  display: inline;
+}
+
+.nav-write-btn-text {
+  display: inline;
+}
+
+/* =====================================================================
+   RESPONSIVE BREAKPOINTS (TABLET & MOBILE)
+   ===================================================================== */
+
+/* Tablet & Smaller (< 1024px) */
+@media (max-width: 1024px) {
+  .home-hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 36px !important;
   }
+
+  .home-side-column {
+    border-left: none !important;
+    padding-left: 0 !important;
+    border-top: 2px solid var(--clr-border-subtle) !important;
+    padding-top: 28px !important;
+  }
+}
+
+/* Medium Tablet & Mobile Nav Switch (< 920px) */
+@media (max-width: 920px) {
+  .nav-desktop {
+    display: none !important;
+  }
+
+  .nav-hamburger {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-guest-group {
+    display: none !important;
+  }
+}
+
+/* Mobile & Small Tablet (< 768px) */
+@media (max-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+
+  /* Clean single-bar header on mobile */
+  .nav-top-bar {
+    display: none !important;
+  }
+
+  .page {
+    padding-top: 68px !important;
+  }
+
+  /* Header controls: clean look with mobile theme toggle and hamburger on top */
+  .nav-desktop {
+    display: none !important;
+  }
+
+  .nav-write-btn {
+    display: none !important;
+  }
+
+  .nav-avatar-wrap {
+    display: none !important;
+  }
+
+  .nav-guest-group {
+    display: none !important;
+  }
+
+  .nav-mobile-theme-btn {
+    display: flex !important;
+  }
+
+  .nav-hamburger {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-masthead-text {
+    font-size: 1.45rem !important;
+  }
+
+  /* Prevent Safari auto-zoom on form focus */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  .container {
+    padding: 0 16px;
+  }
+
+  .auth-container {
+    padding: 24px 16px;
+  }
+
   .auth-card {
     padding: 28px 20px;
+  }
+
+  /* Editor Screen */
+  .editor-body {
+    padding: 20px 16px !important;
+  }
+
+  .editor-footer-bar {
+    padding: 16px !important;
+  }
+
+  .editor-toolbar {
+    gap: 6px !important;
+  }
+
+  .editor-tool-btn {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  /* My Posts Screen */
+  .myposts-story-card {
+    flex-direction: column !important;
+  }
+
+  .myposts-thumb-wrap {
+    width: 100% !important;
+    height: 180px !important;
+    border-right: none !important;
+    border-bottom: 2px solid var(--clr-border-subtle) !important;
+  }
+
+  .myposts-card-body {
+    padding: 20px 16px !important;
+    min-width: 0 !important;
+  }
+
+  .myposts-action-row {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .myposts-action-row .btn {
+    flex: 1 1 auto !important;
+    min-width: 80px;
+    justify-content: center;
+  }
+
+  /* Article Detail View */
+  .post-byline-bar {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px !important;
+  }
+
+  .post-actions-cluster {
+    width: 100% !important;
+    justify-content: flex-start !important;
+  }
+
+  /* Comments */
+  .comment-input-row {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .comment-form-footer {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+
+  .comment-form-footer button {
+    width: 100% !important;
+  }
+}
+
+/* Small Mobile Screens (< 640px) */
+@media (max-width: 640px) {
+  .nav-ticker-text {
+    display: none !important;
+  }
+
+  /* =================================================================
+     STORY CARDS: 1-LINE HEADLINE WITH ELLIPSIS (...) & HIDE DESCRIPTION
+     ================================================================= */
+  .postcard-title-link {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .postcard-title {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: block !important;
+    width: 100% !important;
+    font-size: 1.15rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Hide descriptive content in mobile view */
+  .postcard-excerpt {
+    display: none !important;
+  }
+
+  /* My Posts Page: 1-Line Headline + Hide Excerpt */
+  .myposts-title-link {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .myposts-title {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: block !important;
+    width: 100% !important;
+    font-size: 1.15rem !important;
+    margin-bottom: 8px !important;
+  }
+
+  .myposts-excerpt {
+    display: none !important;
+  }
+
+  /* Top Trending Side Stories: 1-Line Headline with Ellipsis */
+  .home-side-link {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .home-side-title {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .home-search-box {
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  .home-search-box form {
+    width: 100% !important;
+  }
+
+  .home-search-input {
+    width: 100% !important;
+  }
+
+  .home-post-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .posts-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .home-cta-banner {
+    padding: 24px 16px !important;
+  }
+
+  .home-cta-actions {
+    width: 100% !important;
+    flex-direction: column !important;
+  }
+
+  .home-cta-actions .btn {
+    width: 100% !important;
+  }
+
+  .profile-name-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .profile-name-row button {
+    width: 100% !important;
+  }
+
+  .section-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .section-header .btn {
+    width: 100% !important;
+  }
+
+  .pagination {
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+  }
+
+  .pagination-btn {
+    padding: 0 10px !important;
+    font-size: 11px !important;
+    height: 36px !important;
   }
 }

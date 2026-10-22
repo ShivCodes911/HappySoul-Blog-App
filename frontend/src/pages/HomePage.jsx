@@ -183,7 +183,7 @@ export default function HomePage() {
            ================================================================= */
         <section style={hp.heroSection}>
           <div className="container">
-            <div style={hp.heroGrid}>
+            <div style={hp.heroGrid} className="home-hero-grid">
               {/* Lead Article Spread */}
               <div style={hp.mainHero}>
                 <div style={hp.rubricLine}>
@@ -207,7 +207,7 @@ export default function HomePage() {
                     <span className="type-overline" style={{ color: 'var(--clr-text-2)' }}>JOIN THE INKFLOW WRITERS COMMUNITY</span>
                   </div>
 
-                  <div style={{ display: 'flex', gap: 12 }}>
+                  <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                     <Link to="/register" className="btn btn-primary btn-md" id="landing-signup-btn">
                       <span>START WRITING</span>
                       <ArrowRight size={14} />
@@ -220,7 +220,7 @@ export default function HomePage() {
               </div>
 
               {/* Side Column: Trending Articles */}
-              <div style={hp.sideColumn}>
+              <div style={hp.sideColumn} className="home-side-column">
                 <div style={hp.sideHeader}>
                   <span style={hp.sideHeaderTitle}>TOP COMMUNITY STORIES</span>
                   <div style={hp.sideHeaderDot} />
@@ -236,8 +236,8 @@ export default function HomePage() {
                       <article key={story._id} style={hp.sideItem}>
                         <span style={hp.sideNumber}>0{idx + 1}</span>
                         <div style={hp.sideContent}>
-                          <Link to={`/posts/${story._id}`} style={{ textDecoration: 'none' }}>
-                            <h4 style={hp.sideTitle}>{story.title}</h4>
+                          <Link to={`/posts/${story._id}`} style={{ textDecoration: 'none' }} className="home-side-link">
+                            <h4 style={hp.sideTitle} className="home-side-title">{story.title}</h4>
                           </Link>
                           <span style={hp.sideAuthor}>BY {story.author?.name?.toUpperCase() || 'CONTRIBUTOR'}</span>
                         </div>
@@ -263,15 +263,16 @@ export default function HomePage() {
               <span className="type-overline">EXPLORE ARCHIVE</span>
             </div>
 
-            <div style={hp.searchBox}>
-              <Search size={14} style={{ color: 'var(--clr-text-2)' }} />
-              <form onSubmit={handleSearchSubmit}>
+            <div style={hp.searchBox} className="home-search-box">
+              <Search size={14} style={{ color: 'var(--clr-text-2)', flexShrink: 0 }} />
+              <form onSubmit={handleSearchSubmit} style={{ width: '100%' }}>
                 <input
                   type="text"
                   placeholder="SEARCH STORIES..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   style={hp.searchInput}
+                  className="home-search-input"
                   id="home-search-input"
                 />
               </form>
@@ -328,7 +329,7 @@ export default function HomePage() {
               )}
             </div>
           ) : (
-            <div style={hp.postGrid}>
+            <div style={hp.postGrid} className="home-post-grid">
               {posts.map((post, idx) => (
                 <PostCard
                   key={post._id}
@@ -386,7 +387,7 @@ export default function HomePage() {
           ================================================================= */}
       <section style={{ marginTop: 64 }}>
         <div className="container">
-          <div style={hp.ctaBanner}>
+          <div style={hp.ctaBanner} className="home-cta-banner">
             <div style={{ maxWidth: 640 }}>
               <div style={hp.rubricLine}>
                 <span className="type-overline" style={{ color: 'var(--clr-secondary)' }}>
@@ -407,7 +408,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div style={hp.ctaActions}>
+            <div style={hp.ctaActions} className="home-cta-actions">
               {user ? (
                 <>
                   <Link to="/create-post" className="btn btn-primary btn-lg" id="cta-write-post-btn">
@@ -669,7 +670,7 @@ const hp = {
   },
   postGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))',
     gap: 24,
   },
   ctaBanner: {

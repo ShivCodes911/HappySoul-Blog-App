@@ -88,7 +88,7 @@ export default function CommentSection({ postId }) {
       {/* Add response form */}
       {user ? (
         <form onSubmit={handleAdd} style={vcs.formCard}>
-          <div style={vcs.inputRow}>
+          <div style={vcs.inputRow} className="comment-input-row">
             {(user.profileImage?.url || user.profileImage) ? (
               <img
                 src={user.profileImage?.url || user.profileImage}
@@ -112,7 +112,7 @@ export default function CommentSection({ postId }) {
                 id="comment-input"
               />
               {error && <p className="error-msg">{error}</p>}
-              <div style={vcs.formFooter}>
+              <div style={vcs.formFooter} className="comment-form-footer">
                 <span style={vcs.hintText}>COMMUNITY GUIDELINE: BE RESPECTFUL, SUBSTANTIVE, AND CONSTRUCTIVE.</span>
                 <button
                   type="submit"

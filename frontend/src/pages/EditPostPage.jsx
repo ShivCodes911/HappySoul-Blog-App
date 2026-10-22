@@ -318,7 +318,7 @@ export default function EditPostPage() {
           </div>
 
           {/* Title & Body Inputs */}
-          <div style={ved.editorBody}>
+          <div style={ved.editorBody} className="editor-body">
             <div style={{ marginBottom: 20 }}>
               <span className="type-overline">POST TITLE</span>
               <input
@@ -364,7 +364,7 @@ export default function EditPostPage() {
 
               {/* Formatting Toolbar */}
               {activeTab === 'write' && (
-                <div style={ved.toolbar}>
+                <div style={ved.toolbar} className="editor-toolbar">
                   <button
                     type="button"
                     style={ved.toolBtn}
@@ -459,7 +459,7 @@ export default function EditPostPage() {
           </div>
 
           {/* Editorial Actions Footer */}
-          <div style={ved.footerBar}>
+          <div style={ved.footerBar} className="editor-footer-bar">
             <div style={ved.footerNote}>
               CHANGES TO PUBLISHED STORIES WILL BE REFLECTED IMMEDIATELY.
             </div>

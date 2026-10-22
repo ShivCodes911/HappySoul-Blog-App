@@ -109,14 +109,14 @@ export default function MyPostsPage() {
             {posts.map((post) => {
               const coverUrl = post.coverImage?.url || post.coverImage;
               return (
-                <div key={post._id} style={vmp.storyCard}>
+                <div key={post._id} style={vmp.storyCard} className="myposts-story-card">
                   {coverUrl && (
-                    <div style={vmp.thumbWrap}>
+                    <div style={vmp.thumbWrap} className="myposts-thumb-wrap">
                       <img src={coverUrl} alt={post.title} style={vmp.thumb} />
                     </div>
                   )}
 
-                  <div style={vmp.cardBody}>
+                  <div style={vmp.cardBody} className="myposts-card-body">
                     <div style={vmp.statusRow}>
                       {post.published ? (
                         <span className="badge badge-green">LIVE</span>
@@ -129,15 +129,15 @@ export default function MyPostsPage() {
                       </span>
                     </div>
 
-                    <Link to={`/posts/${post._id}`} style={{ textDecoration: 'none' }}>
-                      <h3 style={vmp.title}>{post.title}</h3>
+                    <Link to={`/posts/${post._id}`} style={{ textDecoration: 'none' }} className="myposts-title-link">
+                      <h3 style={vmp.title} className="myposts-title">{post.title}</h3>
                     </Link>
 
-                    <p style={vmp.excerpt}>
+                    <p style={vmp.excerpt} className="myposts-excerpt">
                       {post.content?.slice(0, 160)}…
                     </p>
 
-                    <div style={vmp.actionRow}>
+                    <div style={vmp.actionRow} className="myposts-action-row">
                       <Link to={`/posts/${post._id}`} className="btn btn-secondary btn-sm">
                         <BookOpen size={13} />
                         <span>VIEW</span>

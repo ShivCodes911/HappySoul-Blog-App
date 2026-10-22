@@ -58,12 +58,12 @@ export default function PostCard({ post, onLike, onBookmark, isLiked, isBookmark
         </div>
 
         {/* Archivo Black Headline */}
-        <Link to={`/posts/${post._id}`} style={vc.titleLink}>
-          <h3 style={vc.title}>{post?.title}</h3>
+        <Link to={`/posts/${post._id}`} style={vc.titleLink} className="postcard-title-link">
+          <h3 style={vc.title} className="postcard-title">{post?.title}</h3>
         </Link>
 
         {/* Excerpt */}
-        <p style={vc.excerpt}>{truncate(post?.content)}</p>
+        <p style={vc.excerpt} className="postcard-excerpt">{truncate(post?.content)}</p>
 
         {/* Editorial Byline & Action Footer */}
         <div style={vc.footer}>
@@ -172,6 +172,10 @@ const vc = {
   },
   titleLink: {
     textDecoration: 'none',
+    display: 'block',
+    width: '100%',
+    minWidth: 0,
+    overflow: 'hidden',
   },
   title: {
     fontFamily: 'var(--font-display)',

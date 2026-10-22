@@ -394,7 +394,7 @@ export default function CreatePostPage() {
           </div>
 
           {/* Editor Body */}
-          <div style={ved.editorBody}>
+          <div style={ved.editorBody} className="editor-body">
             {/* Title Input */}
             <div style={{ marginBottom: 20 }}>
               <span className="type-overline">POST TITLE</span>
@@ -441,7 +441,7 @@ export default function CreatePostPage() {
 
               {/* Formatting Toolbar (shown in write mode) */}
               {activeTab === 'write' && (
-                <div style={ved.toolbar}>
+                <div style={ved.toolbar} className="editor-toolbar">
                   <button
                     type="button"
                     style={ved.toolBtn}
@@ -536,7 +536,7 @@ export default function CreatePostPage() {
           </div>
 
           {/* Editorial Actions Footer */}
-          <div style={ved.footerBar}>
+          <div style={ved.footerBar} className="editor-footer-bar">
             <div style={ved.footerNote}>
               MARKDOWN ENABLED // PUBLISHED POSTS ARE IMMEDIATELY VISIBLE TO READERS.
             </div>

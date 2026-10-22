@@ -172,7 +172,7 @@ export default function ProfilePage() {
             <form onSubmit={handleNameUpdate}>
               <div className="form-group">
                 <label className="form-label" htmlFor="profile-name">DISPLAY NAME</label>
-                <div style={{ display: 'flex', gap: 12 }}>
+                <div style={{ display: 'flex', gap: 12 }} className="profile-name-row">
                   <input
                     id="profile-name"
                     type="text"

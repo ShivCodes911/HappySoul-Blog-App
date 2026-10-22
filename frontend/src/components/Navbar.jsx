@@ -51,12 +51,12 @@ export default function Navbar() {
   return (
     <header style={vNav.header}>
       {/* Top Editorial Ticker Bar */}
-      <div style={vNav.topBar}>
+      <div style={vNav.topBar} className="nav-top-bar">
         <div className="container" style={vNav.topBarContainer}>
           <div style={vNav.tickerLeft}>
             <span style={vNav.tickerTag}>INKFLOW BLOG</span>
-            <span style={vNav.tickerDivider}>/</span>
-            <span style={vNav.tickerText}>IDEAS, STORIES & TECHNICAL ESSAYS</span>
+            <span style={vNav.tickerDivider} className="nav-ticker-text">/</span>
+            <span style={vNav.tickerText} className="nav-ticker-text">IDEAS, STORIES & TECHNICAL ESSAYS</span>
           </div>
 
           <div style={vNav.tickerRight}>
@@ -78,12 +78,12 @@ export default function Navbar() {
         <div className="container" style={vNav.mainContainer}>
           {/* Masthead Logo: InkFlow */}
           <Link to="/" style={vNav.mastheadLink} id="brand-logo">
-            <span style={vNav.mastheadText}>INKFLOW</span>
+            <span style={vNav.mastheadText} className="nav-masthead-text">INKFLOW</span>
             <span style={vNav.mastheadDot}>.</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav style={vNav.desktopNav}>
+          <nav style={vNav.desktopNav} className="nav-desktop">
             {navLinks.map((item) => {
               const isActive = item.isRoute && location.pathname === item.href;
               return item.isRoute ? (
@@ -114,12 +114,12 @@ export default function Navbar() {
           <div style={vNav.rightCluster}>
             {user ? (
               <>
-                <Link to="/create-post" className="btn btn-primary btn-sm" id="nav-write-btn">
+                <Link to="/create-post" className="btn btn-primary btn-sm nav-write-btn" id="nav-write-btn">
                   <PenLine size={13} />
-                  <span>NEW POST</span>
+                  <span className="nav-write-btn-text">NEW POST</span>
                 </Link>
 
-                <div style={{ position: 'relative' }} ref={dropRef}>
+                <div style={{ position: 'relative' }} ref={dropRef} className="nav-avatar-wrap">
                   <button
                     onClick={() => setMenuOpen((p) => !p)}
                     style={vNav.avatarBtn}
@@ -193,7 +193,7 @@ export default function Navbar() {
                 </div>
               </>
             ) : (
-              <div style={vNav.guestAuthGroup}>
+              <div style={vNav.guestAuthGroup} className="nav-guest-group">
                 <Link to="/login" className="btn btn-secondary btn-sm" id="nav-login-btn">
                   LOG IN
                 </Link>
@@ -203,10 +203,22 @@ export default function Navbar() {
               </div>
             )}
 
+            {/* Mobile Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              style={vNav.mobileThemeIconBtn}
+              className="nav-mobile-theme-btn"
+              aria-label="Toggle light and dark mode"
+              id="mobile-theme-toggle-btn"
+            >
+              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
+
             {/* Mobile Hamburger Toggle */}
             <button
               onClick={() => setMobileOpen((p) => !p)}
               style={vNav.hamburger}
+              className="nav-hamburger"
               aria-label="Toggle Navigation Menu"
               id="nav-mobile-toggle"
             >
@@ -218,8 +230,45 @@ export default function Navbar() {
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div style={vNav.mobileDrawer}>
+        <div style={vNav.mobileDrawer} className="nav-mobile-drawer">
           <div className="container" style={vNav.mobileContainer}>
+            {user && (
+              <div style={vNav.mobileUserCard}>
+                {user.profileImage?.url || user.profileImage ? (
+                  <img
+                    src={user.profileImage?.url || user.profileImage}
+                    alt={user.name || 'Author'}
+                    className="avatar"
+                    style={{ width: 42, height: 42, objectFit: 'cover' }}
+                  />
+                ) : (
+                  <div className="avatar" style={vNav.mobileAvatarPlaceholder}>
+                    {(user.name || user.email || 'U')[0].toUpperCase()}
+                  </div>
+                )}
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontSize: '15px', color: 'var(--clr-text-1)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user.name || 'InkFlow Contributor'}
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--clr-text-3)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user.email}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {user && (
+              <Link
+                to="/create-post"
+                className="btn btn-primary btn-md"
+                style={{ width: '100%', justifyContent: 'center', margin: '4px 0 10px' }}
+                onClick={() => setMobileOpen(false)}
+              >
+                <PenLine size={14} />
+                <span>+ WRITE NEW POST</span>
+              </Link>
+            )}
+
             {navLinks.map((item) => (
               <Link
                 key={item.label}
@@ -234,13 +283,6 @@ export default function Navbar() {
             {user ? (
               <>
                 <Link
-                  to="/create-post"
-                  style={{ ...vNav.mobileLink, color: 'var(--clr-secondary)' }}
-                  onClick={() => setMobileOpen(false)}
-                >
-                  + WRITE NEW POST
-                </Link>
-                <Link
                   to="/profile"
                   style={vNav.mobileLink}
                   onClick={() => setMobileOpen(false)}
@@ -248,10 +290,22 @@ export default function Navbar() {
                   PROFILE & SETTINGS
                 </Link>
                 <button
-                  style={{ ...vNav.mobileLink, color: 'var(--clr-secondary)', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer' }}
+                  style={{
+                    ...vNav.mobileLink,
+                    color: 'var(--clr-secondary)',
+                    background: 'none',
+                    border: 'none',
+                    borderBottom: '1px solid var(--clr-border-subtle)',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                  }}
                   onClick={handleLogout}
                 >
-                  SIGN OUT
+                  <LogOut size={14} />
+                  <span>SIGN OUT</span>
                 </button>
               </>
             ) : (
@@ -483,7 +537,6 @@ const vNav = {
     gap: 8,
   },
   hamburger: {
-    display: 'none',
     background: 'none',
     border: '2px solid var(--clr-border-strong)',
     padding: 6,
@@ -494,6 +547,8 @@ const vNav = {
     borderTop: '2px solid var(--clr-border-strong)',
     backgroundColor: 'var(--clr-bg)',
     padding: '16px 0 24px',
+    maxHeight: 'calc(100vh - 90px)',
+    overflowY: 'auto',
   },
   mobileContainer: {
     display: 'flex',
@@ -502,9 +557,9 @@ const vNav = {
   },
   mobileLink: {
     fontFamily: 'var(--font-sans)',
-    fontSize: '14px',
+    fontSize: '15px',
     fontWeight: 700,
-    padding: '10px 0',
+    padding: '12px 4px',
     borderBottom: '1px solid var(--clr-border-subtle)',
     color: 'var(--clr-text-1)',
     textTransform: 'uppercase',
@@ -513,5 +568,36 @@ const vNav = {
     display: 'flex',
     gap: 8,
     marginTop: 12,
+  },
+  mobileThemeIconBtn: {
+    background: 'none',
+    border: '2px solid var(--clr-border-strong)',
+    padding: '6px 8px',
+    color: 'var(--clr-text-1)',
+    cursor: 'pointer',
+    display: 'none',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mobileUserCard: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    padding: '8px 0 16px',
+    borderBottom: '2px solid var(--clr-border-subtle)',
+    marginBottom: 8,
+  },
+  mobileAvatarPlaceholder: {
+    width: 42,
+    height: 42,
+    borderRadius: '9999px',
+    backgroundColor: 'var(--clr-border-strong)',
+    color: 'var(--clr-bg)',
+    fontFamily: 'var(--font-display)',
+    fontSize: '15px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
   },
 };
