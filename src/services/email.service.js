@@ -121,6 +121,45 @@ async function sendViaGmailApi(to, subject, text, html) {
 }
 
 /**
+ * Sends an email via Brevo REST API over HTTPS (Port 443).
+ * Does not require a custom domain and can deliver to any recipient.
+ */
+async function sendViaBrevo(to, subject, text, html) {
+  const senderEmail = process.env.BREVO_SENDER_EMAIL || process.env.GOOGLE_USER_ID;
+  if (!senderEmail) {
+    throw new Error("BREVO_SENDER_EMAIL is not set in environment variables.");
+  }
+
+  const payload = {
+    sender: {
+      name: "HappySoul",
+      email: senderEmail,
+    },
+    to: [{ email: to }],
+    subject,
+    htmlContent: html || `<p>${text || ""}</p>`,
+    textContent: text || "",
+  };
+
+  const sendRes = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "api-key": process.env.BREVO_API_KEY,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const sendData = await sendRes.json();
+  if (!sendRes.ok) {
+    throw new Error(`Brevo API failed: ${JSON.stringify(sendData)}`);
+  }
+
+  return { messageId: sendData.messageId, ...sendData };
+}
+
+/**
  * Optional fallback: Resend API over HTTPS (Port 443)
  */
 async function sendViaResend(to, subject, text, html) {
@@ -155,7 +194,9 @@ export const sendEmail = async (to, subject, text, html) => {
     console.log(`[Email Service] Attempting to send "${subject}" to ${to}...`);
 
     let info;
-    if (process.env.RESEND_API_KEY) {
+    if (process.env.BREVO_API_KEY) {
+      info = await sendViaBrevo(to, subject, text, html);
+    } else if (process.env.RESEND_API_KEY) {
       info = await sendViaResend(to, subject, text, html);
     } else if (
       process.env.GOOGLE_CLIENT_ID &&
@@ -166,7 +207,7 @@ export const sendEmail = async (to, subject, text, html) => {
       info = await sendViaGmailApi(to, subject, text, html);
     } else {
       throw new Error(
-        "No email service configured. Please provide Google OAuth credentials or RESEND_API_KEY."
+        "No email service configured. Please provide BREVO_API_KEY & BREVO_SENDER_EMAIL, Google OAuth credentials, or RESEND_API_KEY."
       );
     }
 
