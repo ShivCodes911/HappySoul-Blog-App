@@ -516,7 +516,7 @@ export default function CreatePostPage() {
                 ref={contentInputRef}
                 id="post-content"
                 name="content"
-                placeholder="Write your story using markdown (supports ## headings, **bold**, > quotes, ```code blocks```, and bulleted lists)…"
+                placeholder="Write your story…"
                 value={form.content}
                 onChange={handleChange}
                 style={ved.contentInput}
