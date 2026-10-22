@@ -46,7 +46,7 @@ export default function PostCard({ post, onLike, onBookmark, isLiked, isBookmark
         </Link>
       )}
 
-      <div style={vc.body}>
+      <div style={vc.body} className="postcard-body">
         {/* Overline Rubric */}
         <div style={vc.rubricRow}>
           <span className="type-overline" style={{ color: 'var(--clr-secondary)' }}>STORY</span>
@@ -133,6 +133,9 @@ const vc = {
     backgroundColor: 'var(--clr-bg)',
     border: '2px solid var(--clr-border-medium)',
     transition: 'border-color 0.15s ease',
+    minWidth: 0,
+    maxWidth: '100%',
+    overflow: 'hidden',
   },
   featuredCard: {
     borderTop: '4px solid var(--clr-secondary)',
@@ -142,6 +145,7 @@ const vc = {
     borderBottom: '2px solid var(--clr-border-strong)',
     overflow: 'hidden',
     maxHeight: 220,
+    width: '100%',
   },
   image: {
     width: '100%',
@@ -153,12 +157,16 @@ const vc = {
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
+    minWidth: 0,
+    maxWidth: '100%',
+    overflow: 'hidden',
   },
   rubricRow: {
     display: 'flex',
     alignItems: 'center',
     gap: 8,
     marginBottom: 12,
+    flexWrap: 'wrap',
   },
   dot: {
     color: 'var(--clr-border-medium)',
@@ -200,12 +208,17 @@ const vc = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 12,
+    gap: 8,
+    flexWrap: 'wrap',
+    minWidth: 0,
   },
   author: {
     display: 'flex',
     alignItems: 'center',
     gap: 10,
+    minWidth: 0,
+    flex: 1,
+    overflow: 'hidden',
   },
   authorPlaceholder: {
     width: 28,
@@ -218,10 +231,13 @@ const vc = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    flexShrink: 0,
   },
   authorMeta: {
     display: 'flex',
     flexDirection: 'column',
+    minWidth: 0,
+    overflow: 'hidden',
   },
   authorName: {
     fontFamily: 'var(--font-sans)',
@@ -229,17 +245,25 @@ const vc = {
     fontWeight: 700,
     color: 'var(--clr-text-1)',
     letterSpacing: '0.02em',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    maxWidth: '100%',
   },
   date: {
     fontFamily: 'var(--font-mono)',
     fontSize: '10px',
     color: 'var(--clr-text-3)',
     letterSpacing: '0.02em',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
   actions: {
     display: 'flex',
     alignItems: 'center',
     gap: 6,
+    flexShrink: 0,
   },
   iconBtn: {
     background: 'none',

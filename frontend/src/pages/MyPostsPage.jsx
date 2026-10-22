@@ -210,6 +210,9 @@ const vmp = {
     backgroundColor: 'var(--clr-bg)',
     flexWrap: 'wrap',
     transition: 'border-color 0.15s ease',
+    minWidth: 0,
+    maxWidth: '100%',
+    overflow: 'hidden',
   },
   thumbWrap: {
     width: 220,
@@ -230,7 +233,8 @@ const vmp = {
     flexDirection: 'column',
     gap: 10,
     flex: 1,
-    minWidth: 260,
+    minWidth: 0,
+    overflow: 'hidden',
   },
   statusRow: {
     display: 'flex',

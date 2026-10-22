@@ -235,7 +235,7 @@ export default function HomePage() {
                     {sideStories.map((story, idx) => (
                       <article key={story._id} style={hp.sideItem}>
                         <span style={hp.sideNumber}>0{idx + 1}</span>
-                        <div style={hp.sideContent}>
+                        <div style={hp.sideContent} className="home-side-content">
                           <Link to={`/posts/${story._id}`} style={{ textDecoration: 'none' }} className="home-side-link">
                             <h4 style={hp.sideTitle} className="home-side-title">{story.title}</h4>
                           </Link>
@@ -518,12 +518,16 @@ const hp = {
   mainHero: {
     display: 'flex',
     flexDirection: 'column',
+    minWidth: 0,
+    maxWidth: '100%',
+    overflow: 'hidden',
   },
   rubricLine: {
     display: 'flex',
     alignItems: 'center',
     gap: 10,
     marginBottom: 16,
+    flexWrap: 'wrap',
   },
   rubricSlash: {
     color: 'var(--clr-border-medium)',
@@ -532,6 +536,8 @@ const hp = {
   heroTitle: {
     color: 'var(--clr-text-1)',
     transition: 'color 0.15s ease',
+    wordBreak: 'break-word',
+    overflowWrap: 'break-word',
   },
   heroMetaRow: {
     display: 'flex',
@@ -553,6 +559,9 @@ const hp = {
     paddingLeft: 40,
     display: 'flex',
     flexDirection: 'column',
+    minWidth: 0,
+    maxWidth: '100%',
+    overflow: 'hidden',
   },
   sideHeader: {
     display: 'flex',
@@ -586,17 +595,24 @@ const hp = {
     alignItems: 'flex-start',
     paddingBottom: 20,
     borderBottom: '1px solid var(--clr-border-subtle)',
+    minWidth: 0,
+    width: '100%',
+    overflow: 'hidden',
   },
   sideNumber: {
     fontFamily: 'var(--font-display)',
     fontSize: '1.5rem',
     color: 'var(--clr-secondary)',
     lineHeight: 1,
+    flexShrink: 0,
   },
   sideContent: {
     display: 'flex',
     flexDirection: 'column',
     gap: 4,
+    minWidth: 0,
+    flex: 1,
+    overflow: 'hidden',
   },
   sideTitle: {
     fontFamily: 'var(--font-display)',
@@ -683,6 +699,8 @@ const hp = {
     gap: 32,
     backgroundColor: 'var(--clr-surface)',
     boxShadow: '4px 4px 0px var(--clr-border-strong)',
+    maxWidth: '100%',
+    overflow: 'hidden',
   },
   ctaTitle: {
     fontFamily: 'var(--font-display)',
