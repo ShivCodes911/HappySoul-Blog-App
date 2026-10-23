@@ -1,8 +1,8 @@
 import express from "express";
 
-import { signup, verifyEmail,login, refreshToken ,logout,logoutAll,
-     getCurrentUser,updateCurrentUser,changePassword, forgetPassword,
-     resetPassword,profileImageUpload,newProfileImage, deleteUser} from "../controllers/user.controller.js";
+import { signup, verifyEmail, resendVerificationOtp, login, refreshToken, logout, logoutAll,
+     getCurrentUser, updateCurrentUser, changePassword, forgetPassword,
+     resetPassword, profileImageUpload, newProfileImage, deleteUser } from "../controllers/user.controller.js";
 
 import { UserAuthMidlleware } from "../middlewares/auth.middleware.js";
 
@@ -15,6 +15,7 @@ const router=express.Router();
 
 router.post("/signup",signup);
 router.post("/verify",verifyEmail);
+router.post("/resend-otp",resendVerificationOtp);
 
 router.post("/login",login);
 

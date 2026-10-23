@@ -1,14 +1,24 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useRef } from 'react';
+import { CheckCircle2, AlertCircle, AlertTriangle, X } from 'lucide-react';
 
 const ToastContext = createContext(null);
 
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
+  const lastToastRef = useRef({ message: '', time: 0 });
 
   const addToast = useCallback((message, type = 'success') => {
-    const id = Date.now();
+    const now = Date.now();
+    if (lastToastRef.current.message === message && (now - lastToastRef.current.time) < 500) {
+      return;
+    }
+    lastToastRef.current = { message, time: now };
+
+    const id = now + Math.random();
     setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 3500);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 3800);
   }, []);
 
   const removeToast = useCallback((id) => {
@@ -18,21 +28,39 @@ export function ToastProvider({ children }) {
   return (
     <ToastContext.Provider value={{ toast: addToast }}>
       {children}
-      <div style={ts.container}>
-        {toasts.map((t) => (
-          <div
-            key={t.id}
-            style={{
-              ...ts.toast,
-              ...(t.type === 'error' ? ts.error : t.type === 'warning' ? ts.warning : ts.success),
-            }}
-            className="animate-slideRight"
-          >
-            <span>{t.type === 'error' ? '❌' : t.type === 'warning' ? '⚠️' : '✅'}</span>
-            <span style={ts.msg}>{t.message}</span>
-            <button style={ts.close} onClick={() => removeToast(t.id)}>✕</button>
-          </div>
-        ))}
+      <div style={vts.container}>
+        {toasts.map((t) => {
+          const isError = t.type === 'error';
+          const isWarning = t.type === 'warning';
+
+          return (
+            <div
+              key={t.id}
+              style={{
+                ...vts.toast,
+                ...(isError ? vts.error : isWarning ? vts.warning : vts.success),
+              }}
+            >
+              <div style={vts.iconCol}>
+                {isError ? (
+                  <AlertCircle size={15} color="var(--clr-secondary)" />
+                ) : isWarning ? (
+                  <AlertTriangle size={15} color="var(--clr-warning)" />
+                ) : (
+                  <CheckCircle2 size={15} color="var(--clr-success)" />
+                )}
+              </div>
+              <div style={vts.msg}>{t.message}</div>
+              <button
+                style={vts.closeBtn}
+                onClick={() => removeToast(t.id)}
+                aria-label="Dismiss notification"
+              >
+                <X size={13} />
+              </button>
+            </div>
+          );
+        })}
       </div>
     </ToastContext.Provider>
   );
@@ -44,48 +72,67 @@ export const useToast = () => {
   return ctx;
 };
 
-const ts = {
+const vts = {
   container: {
     position: 'fixed',
     bottom: 24,
     right: 24,
     display: 'flex',
     flexDirection: 'column',
-    gap: 10,
-    zIndex: 9999,
+    gap: 8,
+    zIndex: 99999,
     pointerEvents: 'none',
   },
   toast: {
     display: 'flex',
     alignItems: 'center',
-    gap: 10,
+    gap: 12,
     padding: '12px 16px',
-    borderRadius: 12,
-    boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
-    fontSize: '0.875rem',
-    fontWeight: 500,
-    maxWidth: 360,
+    border: '2px solid var(--clr-border-strong)',
+    borderRadius: '0px',
+    boxShadow: 'none',
+    fontSize: '13px',
+    fontFamily: 'var(--font-sans)',
+    fontWeight: 600,
+    maxWidth: 380,
+    minWidth: 260,
     pointerEvents: 'auto',
   },
-  msg: { flex: 1, color: 'var(--clr-text-1)' },
-  close: {
+  iconCol: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  msg: {
+    flex: 1,
+    lineHeight: 1.4,
+    letterSpacing: '0.01em',
+  },
+  closeBtn: {
     background: 'none',
     border: 'none',
     cursor: 'pointer',
-    color: 'var(--clr-text-3)',
-    fontSize: '0.75rem',
+    color: 'inherit',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 2,
+    flexShrink: 0,
   },
   success: {
-    background: 'rgba(16, 185, 129, 0.15)',
-    border: '1px solid rgba(16, 185, 129, 0.3)',
+    backgroundColor: 'var(--clr-success-bg)',
+    color: 'var(--clr-success)',
+    borderColor: 'var(--clr-success)',
   },
   error: {
-    background: 'rgba(239, 68, 68, 0.15)',
-    border: '1px solid rgba(239, 68, 68, 0.3)',
+    backgroundColor: 'var(--clr-danger-bg)',
+    color: 'var(--clr-secondary)',
+    borderColor: 'var(--clr-secondary)',
   },
   warning: {
-    background: 'rgba(245, 158, 11, 0.15)',
-    border: '1px solid rgba(245, 158, 11, 0.3)',
+    backgroundColor: 'var(--clr-warning-bg)',
+    color: 'var(--clr-warning)',
+    borderColor: 'var(--clr-warning)',
   },
 };
